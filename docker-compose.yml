@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+    node:
+        image: node:10-alpine
+        depends_on:
+            - mysql
+        volumes:
+            - ./:/home/tss404
+        working_dir: /home/tss404
+        ports:
+            - 8080:8080
+        command: npm run dev
+    mysql:
+        image: mysql:8.0
+        restart: always
+        volumes:
+            - ./docker/data/mysql:/var/lib/mysql
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        command: --default-authentication-plugin=mysql_native_password
+    adminer:
+        image: adminer:4.7
+        restart: always
+        ports:
+            - 8081:8080

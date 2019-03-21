@@ -1,0 +1,36 @@
+{
+    "name": "tss404",
+    "version": "1.0.0",
+    "description": "Movies REST API project for Server-Side Technologies subject.",
+    "main": "./server.js",
+    "scripts": {
+        "dev": "./node_modules/.bin/nodemon server.js --legacy-watch",
+        "apidoc": "./node_modules/.bin/apidoc -i controllers/ -o docs/",
+        "test": "NODE_ENV=test npx sequelize db:create; NODE_ENV=test npx sequelize db:migrate; NODE_ENV=test npx sequelize db:seed:all; NODE_ENV=test ./node_modules/.bin/mocha tests --recursive --exit",
+        "eslint": "./node_modules/.bin/eslint \"**/*.js\""
+    },
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.18.3",
+        "cors": "^2.8.5",
+        "dotenv": "^7.0.0",
+        "express": "^4.16.4",
+        "helmet": "^3.16.0",
+        "mysql2": "^1.6.5",
+        "sequelize": "^5.1.0",
+        "sequelize-cli": "^5.4.0"
+    },
+    "devDependencies": {
+        "apidoc": "^0.17.7",
+        "chai": "^4.2.0",
+        "chai-http": "^4.2.1",
+        "eslint": "^5.15.3",
+        "eslint-config-standard": "^12.0.0",
+        "eslint-plugin-import": "^2.16.0",
+        "eslint-plugin-node": "^8.0.1",
+        "eslint-plugin-promise": "^4.0.1",
+        "eslint-plugin-standard": "^4.0.0",
+        "mocha": "^6.0.2",
+        "nodemon": "^1.18.10"
+    }
+}
