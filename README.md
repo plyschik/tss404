@@ -1,51 +1,65 @@
 # TSS:404
 
-W celu uruchomienia aplikacji wykonaj:
+Projekt realizowany w ramach zajęć z przedmiotu Technologie Server-Side.
 
-1. Skolnuj to repozytorium
+## Instrukcja instalacji
+
+1. Skolnuj repozytorium:
 ```bash
 $ git clone https://github.com/plyschik/tss404.git
 ```
 
-2. Przejdz do utworzonego katalogu i uruchom kontener:
+2. Przejdz do utworzonego katalogu:
 ```bash
-$ docker-compose up
+$ cd tss404
 ```
 
-3. Następnie przejdź do terminala `sh` w kontenerze:
+3. Uruchom serwisy:
 ```bash
-$ docker-compose exec node sh
+$ docker-compose up -d
 ```
 
-4. Pobierz zależności:
+4. Następnie przejdź do terminala `sh` w kontenerze:
 ```bash
-$ npm install
+$ docker-compose exec nodejs sh
 ```
 
-5. Usługi działają na portach:
-```
-127.0.0.1:8080 - node (REST API),
-127.0.0.1:8081 - adminer (prosty panel do zarządzania bazą danych)
-127.0.0.1:3306 - serwer MySQL
-```
-Przetestujcie czy wszyskie usługi działają.
-
-6. Aby uruchomić skrypt deweloperski (przeładowywaie plików za pomocą `nodemon`):
+5. Utwórz plik konfiguracyjny `.env` (ewentualnie dostosuj ustawienia):
 ```bash
-$ npm run dev
-``` 
+$ mv .env.example .env
+$ nano .env
+```
 
-7. Aby uruchomić LINTera (ESLINT):
+6. Aby zainicjować bazę danych należy użyć następującego polecenia:
+```bash
+$ npm run db:init
+```
+
+7. Aby wygenerować dokumentację apiDoc należy użyć następującego polecenia:
+```bash
+$ npm run apidoc
+```
+
+8. Aby uruchomić narzędzie ESLint należy użyć następującego polecenia:
 ```bash
 $ npm run eslint
 ```
 
-8 . Aby uruchomić testy (Mocha + Chai + ChaiHttp):
+9. Aby uruchomić testy należy użyć następującego polecenia:
 ```bash
 $ npm run test
 ```
 
-9. Aby wygenerować dokumentację (ApiDoc) dostępną pod adresem `http://127.0.0.1:8080/docs`:
+10. W celu zamknięcia serwisów należy użyć polecenia:
 ```bash
-$ npm run apidoc
+$ docker-compose down
 ```
+Jeśli serwisy zostały uruchomione bez przełącznika `-d` (w tle) to w celu zakmnięcia serwisów należ użyć kombinacji klawiszy: `CTRL + C` (jednokrotnie, dwukrotnie usuwa kontenery).
+
+## Usługi
+
+* [NodeJS](https://hub.docker.com/_/node) (wersja: 10.15.3, port: 8080): [http://127.0.0.1:8080](http://127.0.0.1:8080)
+* [MySQL](https://hub.docker.com/_/mysql) (wersja: 8.0.15, port: 3306): [http://127.0.0.1:3306](http://127.0.0.1:3306)
+* [Adminer](https://hub.docker.com/_/adminer) (wersja: 4.7.1, port: 8081): [http://127.0.0.1:8081](http://127.0.0.1:8081)
+
+Dokumentacja apiDoc po wygenerowaniu (`npm run apidoc`) będzie dostępna pod adresem: [http://127.0.0.1:8080/docs](http://127.0.0.1:8080/docs)

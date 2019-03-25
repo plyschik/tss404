@@ -4,13 +4,15 @@
     "description": "Movies REST API project for Server-Side Technologies subject.",
     "main": "./server.js",
     "scripts": {
-        "dev": "./node_modules/.bin/nodemon server.js --legacy-watch",
+        "start": "./node_modules/.bin/nodemon server.js --legacy-watch",
+        "db:init": "./bin/init-db.sh",
         "apidoc": "./node_modules/.bin/apidoc -i controllers/ -o docs/",
-        "test": "NODE_ENV=test npx sequelize db:create; NODE_ENV=test npx sequelize db:migrate; NODE_ENV=test npx sequelize db:seed:all; NODE_ENV=test ./node_modules/.bin/mocha tests --recursive --exit",
-        "eslint": "./node_modules/.bin/eslint \"**/*.js\""
+        "eslint": "./node_modules/.bin/eslint \"**/*.js\"",
+        "test": "NODE_ENV=test ./node_modules/.bin/mocha tests --recursive --exit"
     },
     "license": "ISC",
     "dependencies": {
+        "apidoc": "^0.17.7",
         "body-parser": "^1.18.3",
         "cors": "^2.8.5",
         "dotenv": "^7.0.0",
@@ -21,7 +23,6 @@
         "sequelize-cli": "^5.4.0"
     },
     "devDependencies": {
-        "apidoc": "^0.17.7",
         "chai": "^4.2.0",
         "chai-http": "^4.2.1",
         "eslint": "^5.15.3",
