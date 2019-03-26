@@ -10,6 +10,7 @@ services:
             - /home/tss404/node_modules
         depends_on:
             - mysql
+        tty: true
     mysql:
         image: mysql:8.0.15
         restart: always
@@ -20,6 +21,7 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: root
         command: --default-authentication-plugin=mysql_native_password
+        tty: true
     adminer:
         image: adminer:4.7.1
         restart: always
