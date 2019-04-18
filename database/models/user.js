@@ -1,6 +1,6 @@
 'use strict';
 
-const bcrypt = require('bcrypt')
+const bcryptjs = require('bcryptjs')
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -14,11 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
   };
   User.beforeCreate((user, options) => {
-    return bcrypt.hash(user.password, 10)
-      .then(hash => user.password = hash)
-      .catch(error => {
-        throw new Error()
-      });
+    user.password = bcryptjs.hashSync(user.password, 10)
   });
   return User;
 };
