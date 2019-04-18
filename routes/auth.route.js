@@ -19,4 +19,6 @@ router.post('/signup', [
     check('lastName').isLength({ min: 2, max: 32 })
 ], authController.signup)
 
+router.post('/signin', authController.signin)
+
 module.exports = router
