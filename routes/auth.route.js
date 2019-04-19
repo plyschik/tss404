@@ -21,4 +21,6 @@ router.post('/signup', [
 
 router.post('/signin', authController.signin)
 
+router.post('/token', authController.token)
+
 module.exports = router

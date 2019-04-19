@@ -1,8 +1,11 @@
 const User = require('../database/models').User
+const RefreshToken = require('../database/models').RefreshToken
 const { validationResult } = require('express-validator/check')
 const jwt = require('jsonwebtoken')
 const config = require('./../config')
 const bcryptjs = require('bcryptjs')
+const crypto = require('crypto')
+const moment = require('moment')
 
 /**
  * @api {post} /api/v1/auth/signup Request for JWT token
@@ -69,9 +72,34 @@ exports.signin = async (request, response, next) => {
   }).then(user => {
     if (user) {
       if (bcryptjs.compareSync(password, user.password)) {
-        const token = jwt.sign({ user_id: user.id }, config.secret)
+        RefreshToken.findOne({
+          where: {
+            userId: user.id
+          }
+        }).then(token => {
+          if (token) {
+            token.destroy()
+          }
+        })
 
-        return response.status(200).json({ token })
+        let refreshToken = crypto.randomBytes(64).toString('hex')
+
+        RefreshToken.create({
+          userId: user.id,
+          token: refreshToken,
+          expiredAt: moment().add(config.jwt.refreshTokenTTL, 'minutes').format()
+        }).then(() => {
+          const accessToken = jwt.sign({ user_id: user.id }, config.jwt.secret, { expiresIn: `${config.jwt.accessTokenTTL}m` })
+
+          return response.status(200).json({
+            status: 'success',
+            message: 'Signed in successfully.',
+            data: {
+              accessToken,
+              refreshToken
+            }
+          })
+        })
       } else {
         return response.status(422).json({
           status: 'error',
@@ -87,4 +115,43 @@ exports.signin = async (request, response, next) => {
       })
     }
   }).catch(error => console.log(error))
+}
+
+/**
+ * @api {post} /api/v1/auth/token Request for new JWT token with refresh token.
+ * @apiVersion 1.0.0
+ * @apiGroup Auth
+ * @apiDescription This endpoint return new JWT token based on refresh token.
+ * @apiSuccess {String}   refreshToken    Refresh token.
+ */
+exports.token = async (request, response, next) => {
+  let refreshToken = request.body.refreshToken
+  
+  RefreshToken.findOne({
+    where: { token: refreshToken },
+    include: [ User ]
+  }).then(token => {
+    if (token) {
+      if (moment() <= moment(token.expiredAt)) {
+        const accessToken = jwt.sign({ user_id: token.User.dataValues.id }, config.jwt.secret, { expiresIn: `${config.jwt.accessTokenTTL}m` })
+
+        return response.status(200).json({
+          message: 'Access token successfully refreshed.',
+          data: {
+            accessToken
+          }
+        })
+      } else {
+        token.destroy()
+
+        return response.status(401).json({
+          message: 'Refresh token expired.'
+        })
+      }
+    } else {
+      return response.status(401).json({
+        message: 'Invalid refresh token.'
+      })
+    }
+  })
 }

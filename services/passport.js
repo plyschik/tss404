@@ -6,7 +6,7 @@ const ExtractJwt = passportJWT.ExtractJwt
 const JwtStrategy = passportJWT.Strategy
 
 const jwtOptions = {
-  secretOrKey: config.secret,
+  secretOrKey: config.jwt.secret,
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
 }
 
