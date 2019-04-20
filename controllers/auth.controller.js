@@ -81,7 +81,15 @@ exports.signin = async (request, response) => {
       token: refreshToken,
       expiredAt: moment().add(config.jwt.refreshTokenTTL, 'minutes').format()
     }).then(() => {
-      const accessToken = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: `${config.jwt.accessTokenTTL}m` })
+      const accessToken = jwt.sign({
+        user: {
+          id: user.id,
+          role: user.role,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
+      }, config.jwt.secret, { expiresIn: `${config.jwt.accessTokenTTL}m` })
 
       return response.status(200).json({
         message: 'Signed in successfully.',
@@ -145,7 +153,15 @@ exports.token = async (request, response) => {
       return response.status(400).json({ message: 'Refresh token expired.' })
     }
 
-    const accessToken = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: `${config.jwt.accessTokenTTL}m` })
+    const accessToken = jwt.sign({
+      user: {
+        id: user.id,
+        role: user.role,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName
+      }
+    }, config.jwt.secret, { expiresIn: `${config.jwt.accessTokenTTL}m` })
 
     return response.status(200).json({
       message: 'Access token successfully refreshed.',

@@ -16,7 +16,9 @@ exports.getObjects = async (request, response) => {
       ['id', 'DESC']
     ]
   }).then(objects => {
-    response.status(200).json(objects)
+    response.status(200).json({
+      objects
+    })
   })
 }
 
