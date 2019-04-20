@@ -1,6 +1,6 @@
 const config = require('../config')
-const User = require('../database/models').User
 const passportJWT = require('passport-jwt')
+const models = require('../database/models')
 
 const ExtractJwt = passportJWT.ExtractJwt
 const JwtStrategy = passportJWT.Strategy
@@ -11,8 +11,8 @@ const jwtOptions = {
 }
 
 const jwtStrategy = new JwtStrategy(jwtOptions, (jwtPayload, done) => {
-  User.findOne({
-    where: { id: jwtPayload.user_id }
+  models.User.findOne({
+    where: { id: jwtPayload.userId }
   }).then(user => {
     if (user) {
       done(null, user)
