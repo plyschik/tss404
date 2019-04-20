@@ -20,6 +20,7 @@ services:
             - ./docker/data/mysql:/var/lib/mysql
         environment:
             MYSQL_ROOT_PASSWORD: root
+            TZ: Europe/Warsaw
         command: --default-authentication-plugin=mysql_native_password
         tty: true
     adminer:

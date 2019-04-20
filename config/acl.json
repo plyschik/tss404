@@ -1,0 +1,42 @@
+[
+  {
+    "group": "guest",
+    "permissions": [
+      {
+        "resource": "auth/signup",
+        "methods": "*",
+        "action": "allow"
+      },
+      {
+        "resource": "auth/signin",
+        "methods": "*",
+        "action": "allow"
+      }
+    ]
+  },
+  {
+    "group": "user",
+    "permissions": [
+      {
+        "resource": "auth/*",
+        "methods": "*",
+        "action": "allow"
+      },
+      {
+        "resource": "objects/*",
+        "methods": ["GET"],
+        "action": "allow"
+      }
+    ]
+  },
+  {
+    "group": "administrator",
+    "permissions": [
+      {
+        "resource": "*",
+        "methods": "*",
+        "action": "allow"
+      }
+    ]
+  }
+]
