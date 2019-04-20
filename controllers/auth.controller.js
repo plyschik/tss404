@@ -111,7 +111,7 @@ exports.signin = async (request, response) => {
  */
 exports.signout = async (request, response) => {
   models.RefreshToken.destroy({
-    where: { userId: request.user.dataValues.id }
+    where: { userId: request.user.id }
   }).then(() => {
     return response.status(200).json({ message: 'Signed out successfully.' })
   })
