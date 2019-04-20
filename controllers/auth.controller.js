@@ -155,3 +155,22 @@ exports.token = async (request, response, next) => {
     }
   })
 }
+
+/**
+ * @api {post} /api/v1/auth/signout Request for new JWT token with refresh token.
+ * @apiVersion 1.0.0
+ * @apiGroup Auth
+ * @apiDescription This endpoint return new JWT token based on refresh token.
+ * @apiSuccess {String}   refreshToken    Refresh token.
+ */
+exports.signout = async (request, response, next) => {
+  RefreshToken.destroy({
+    where: {
+      userId: request.user.id
+    }
+  }).then(() => {
+    return response.status(200).json({
+      message: 'Signed out successfully.'
+    })
+  })
+}

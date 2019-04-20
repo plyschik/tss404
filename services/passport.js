@@ -20,7 +20,7 @@ const jwtStrategy = new JwtStrategy(jwtOptions, (jwtPayload, done) => {
       done(null, false)
     }
   }).catch(error => done(error))
-})
+})  
 
 exports.jwtOptions = jwtOptions
 exports.jwt = jwtStrategy
