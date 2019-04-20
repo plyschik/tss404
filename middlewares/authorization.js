@@ -2,7 +2,7 @@ const config = require('../config')
 const jwt = require('jsonwebtoken')
 
 module.exports = (request, response, next) => {
-  const authorizationHeader = request.headers['authorization'];
+  const authorizationHeader = request.headers['authorization']
 
   if (!authorizationHeader) {
     request.user = {
