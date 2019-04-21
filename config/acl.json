@@ -11,6 +11,11 @@
         "resource": "auth/signin",
         "methods": "*",
         "action": "allow"
+      },
+      {
+        "resource": "auth/token",
+        "methods": "*",
+        "action": "allow"
       }
     ]
   },
