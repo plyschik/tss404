@@ -3,6 +3,13 @@
     "group": "guest",
     "permissions": [
       {
+        "resource": "search",
+        "methods": [
+          "GET"
+        ],
+        "action": "allow"
+      },
+      {
         "resource": "auth/signup",
         "methods": "*",
         "action": "allow"
@@ -29,7 +36,9 @@
       },
       {
         "resource": "objects/*",
-        "methods": ["GET"],
+        "methods": [
+          "GET"
+        ],
         "action": "allow"
       }
     ]
