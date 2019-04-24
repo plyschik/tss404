@@ -1,6 +1,4 @@
-const config = require('./../config')
-const axios = require('axios')
-const CircularJSON = require('circular-json')
+const tmdb = require('../services/tmdb')
 
 /**
  * @api             {get}      /api/v1/search Search for movies in TMDB.
@@ -12,40 +10,26 @@ const CircularJSON = require('circular-json')
  * @apiError        {Object[]}  errors    Array of errors messages.
  */
 exports.search = (request, response) => {
-    const query = request.query.q;
-    axios.get('https://api.themoviedb.org/3/search/movie', { params: { api_key: config.tmdb.api_key, query } })
-        .then((movies) => {
-            let results = [];
-            let genreNames = new Set();
+  const query = request.query.q
+  tmdb.api.get('/search/movie', { params: { query } })
+    .then((movies) => {
+      let results = []
 
-            axios.get('https://api.themoviedb.org/3/genre/movie/list', { params: { api_key: config.tmdb.api_key } })
-                .then((fetchedGenres) => {
-                    movies.data.results.forEach((movie) => {
-                        movie.genre_ids.forEach((genreId) => {
-                            for (let genre of fetchedGenres.data.genres) {
-                                if (genreId === genre.id) {
-                                    genreNames.add(genre.name);
-                                }
-                            }
-                        })
+      tmdb.api.get('/genre/movie/list')
+        .then((fetchedGenres) => {
+          movies.data.results.forEach((movie) => {
+            const genreNames = tmdb.getGenreNamesFromIds(movie.genre_ids, fetchedGenres.data.genres)
 
-                        results.push({
-                            id: movie.id,
-                            title: movie.title,
-                            poster: `https://image.tmdb.org/t/p/w500/${movie.poster_path}`,
-                            original_language: movie.original_language,
-                            overview: movie.overview,
-                            release_date: movie.release_date,
-                            genres: Array.from(genreNames)
-                        })
-                    });
-                    response.send(results);
-                })
-                .catch((errors) => {
-                    response.status(errors.response.status).send(errors.response.data);
-                })
+            results.push(tmdb.getReducedMovieInfo(movie, genreNames))
+          })
+
+          response.send(results)
         })
         .catch((errors) => {
-            response.status(errors.response.status).send(errors.response.data);
+          response.status(errors.response.status).send(errors.response.data)
         })
+    })
+    .catch((errors) => {
+      response.status(errors.response.status).send(errors.response.data)
+    })
 }
