@@ -31,6 +31,11 @@
         "resource": "objects/*",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "users/me",
+        "methods": ["PATCH"],
+        "action": "allow"
       }
     ]
   },

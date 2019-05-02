@@ -40,7 +40,7 @@ describe('Auth controller', () => {
           response.should.be.json
           response.body.should.be.a('object')
           response.body.should.have.property('message')
-  
+
           models.User.destroy({
             where: { email: 'test@test.test' }
           }).then(() => {
@@ -79,7 +79,7 @@ describe('Auth controller', () => {
           response.should.be.json
           response.body.should.be.a('object')
           response.body.should.have.property('message')
-  
+
           done()
         })
     })
@@ -108,7 +108,7 @@ describe('Auth controller', () => {
               response.body.should.have.property('data')
               response.body.data.should.have.property('accessToken')
               response.body.data.should.have.property('refreshToken')
-      
+
               models.User.destroy({
                 where: { email: 'test@test.test' }
               }).then(() => {
@@ -162,7 +162,7 @@ describe('Auth controller', () => {
                   response.should.be.json
                   response.body.should.be.a('object')
                   response.body.should.have.property('message')
-          
+
                   models.User.destroy({
                     where: { email: 'test@test.test' }
                   }).then(() => {
@@ -206,7 +206,7 @@ describe('Auth controller', () => {
                   response.body.should.have.property('message')
                   response.body.should.have.property('data')
                   response.body.data.should.have.property('accessToken')
-          
+
                   models.User.destroy({
                     where: { email: 'test@test.test' }
                   }).then(() => {
