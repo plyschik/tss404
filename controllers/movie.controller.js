@@ -1,5 +1,6 @@
 const Movie = require('../database/models').Movie
 const Playlist = require('../database/models').Playlist
+const tmdb = require('../services/tmdb')
 
 /**
  * @api             {get}     /api/v1/movies/    Show all movies from database.
@@ -19,17 +20,17 @@ const Playlist = require('../database/models').Playlist
  */
 
 exports.getMovies = async (request, response) => {
-   Movie.findAll({
-       order: [
-           ['id', 'DESC']
+    Movie.findAll({
+        order: [
+            ['id', 'DESC']
         ]
-   })
-   .then(movies => {
-       response.status(200).json({
-           movies
-       })
-   })   
-   .catch(err => res.status(400).json('unable to find movies'));
+    })
+        .then(movies => {
+            response.status(200).json({
+                movies
+            })
+        })
+        .catch(err => res.status(400).json('unable to find movies'));
 }
 
 /**
@@ -50,18 +51,18 @@ exports.getMovies = async (request, response) => {
  */
 
 exports.getMovie = async (request, response) => {
-    const {id} = request.params;
+    const { id } = request.params;
     Movie.findAll({
         where: {
             id
-          }
+        }
     })
-    .then(movies => {
-        response.status(200).json({
-            movies
+        .then(movies => {
+            response.status(200).json({
+                movies
+            })
         })
-    })
-    .catch(err => res.status(400).json('unable to find movie'));
+        .catch(err => res.status(404).json('unable to find movie'));
 }
 
 /**
@@ -77,7 +78,26 @@ exports.getMovie = async (request, response) => {
  */
 
 exports.createMovie = (request, response) => {
-   
+
+    const { id } = request.body;
+
+    tmdb.api.get(`/movie/${id}`)
+        .then(movie => {
+            const { movie_id, original_title, original_language, poster_path, overview, release_date, genres } = movie.data;
+
+            const genreNames = genres.map(genre => genre.name);
+
+            Movie.create({
+                id: movie_id,
+                title: original_title,
+                poster: `https://image.tmdb.org/t/p/w500/${poster_path}`,
+                originalLanguage: original_language,
+                overview,
+                playlistId: 1,
+                releaseDate: release_date,
+                genres: genreNames.toString()
+            }).then(createdMovie => response.send(createdMovie))
+        })
 }
 
 /**
@@ -98,17 +118,17 @@ exports.createMovie = (request, response) => {
  */
 
 exports.deleteMovie = (request, response) => {
-    const {movieId, playlistId} = request.params; 
+    const { movieId, playlistId } = request.params;
     Movie.destroy({
         where: {
             movieId,
             playlistId
         }
     })
-    .then(movie => {
-        response.status(200).json({
-            movie
+        .then(movie => {
+            response.status(200).json({
+                movie
+            })
         })
-    })
-    .catch(err => res.status(400).json('unable to delete movie'));
+        .catch(err => res.status(400).json('unable to delete movie'));
 }

@@ -7,5 +7,8 @@ module.exports = {
     secret: process.env.JWT_SECRET,
     accessTokenTTL: process.env.JWT_ACCESS_TOKEN_TTL,
     refreshTokenTTL: process.env.JWT_REFRESH_TOKEN_TTL
+  },
+  tmdb: {
+    api_key: process.env.TMDB_API_KEY
   }
 }
