@@ -16,6 +16,11 @@
         "resource": "auth/token",
         "methods": "*",
         "action": "allow"
+      },   
+      {
+        "resource": "playlist/:playlistId/movies/:movieId",
+        "methods": ["DESTROY"],
+        "action": "allow"
       }
     ]
   },
@@ -44,6 +49,11 @@
     "permissions": [
       {
         "resource": "*",
+        "methods": "*",
+        "action": "allow"
+      },
+      {
+        "resource": "movies",
         "methods": "*",
         "action": "allow"
       }
