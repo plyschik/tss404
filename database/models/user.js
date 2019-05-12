@@ -12,7 +12,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   
   User.associate = function(models) {
-    User.hasOne(models.RefreshToken)
+    User.hasOne(models.RefreshToken),
+    User.hasMany(models.Playlist)
   };
   
   User.beforeCreate((user, options) => {
