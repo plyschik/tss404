@@ -55,6 +55,11 @@
         "resource": "users/me",
         "methods": ["PATCH"],
         "action": "allow"
+      },
+      {
+        "resource": "playlists/*",
+        "methods": "*",
+        "action": "allow"
       }
     ]
   },
