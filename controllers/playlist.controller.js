@@ -1,4 +1,7 @@
 const Playlist = require('../database/models').Playlist
+const { validationResult } = require('express-validator/check')
+const models = require('../database/models')
+
 
 /**
  * @api {get} /api/v1/playlists Request for list of playlist
@@ -12,13 +15,14 @@ const Playlist = require('../database/models').Playlist
  * @apiSuccess {Date}     updatedAt            playlist update date.
  */
 exports.getPlaylists = async (request, response) => {
+
   Playlist.findAll({
     order: [
       ['id', 'DESC']
-    ]
-  }).then(Playlist => {
+    ],
+  }).then(playlist => {
     response.status(200).json({
-      Playlist
+      playlist
     })
   })
 }
@@ -63,10 +67,22 @@ exports.getPlaylist = async (request, response) => {
  * @apiSuccess  {Date}     updatedAt           Created playlist update date.
  */
 exports.createPlaylist = async (request, response) => {
-  Playlist.create({
-    name: request.body.name,
-    description: request.body.description
-  }).then(playlist => response.status(201).json(playlist))
+  const validationErrors = validationResult(request)
+
+  if (!validationErrors.isEmpty()) {
+    response.status(400).json({
+      message: 'Invalid request data.',
+      errors: validationErrors.array()
+    })
+  }
+
+  else{
+    Playlist.create({
+      userId: request.user.id,
+      name: request.body.name,
+      description: request.body.description,
+    }).then(playlist => response.status(201).json(playlist))
+  }
 }
 
 /**

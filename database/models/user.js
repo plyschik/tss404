@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   
   User.associate = function(models) {
     User.hasOne(models.RefreshToken),
-    User.hasMany(models.Playlist)
+    User.hasMany(models.Playlist, {foreignKey: "userId"})
   };
   
   User.beforeCreate((user, options) => {

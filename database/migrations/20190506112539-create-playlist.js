@@ -15,6 +15,13 @@ module.exports = {
       description: {
         type: Sequelize.STRING
       },
+      userId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Users',
+          key: 'id'
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -23,14 +30,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      userId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Users',
-          key: 'id'
-        }
-      },
+      
     });
   },
   down: (queryInterface, Sequelize) => {
