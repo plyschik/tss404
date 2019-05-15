@@ -3,6 +3,13 @@
     "group": "guest",
     "permissions": [
       {
+        "resource": "search",
+        "methods": [
+          "GET"
+        ],
+        "action": "allow"
+      },
+      {
         "resource": "auth/signup",
         "methods": "*",
         "action": "allow"
@@ -14,6 +21,16 @@
       },
       {
         "resource": "auth/token",
+        "methods": "*",
+        "action": "allow"
+      },   
+      {
+        "resource": "playlist/:playlistId/movies/:movieId",
+        "methods": ["DESTROY"],
+        "action": "allow"
+      },
+      {
+        "resource": "movies",
         "methods": "*",
         "action": "allow"
       }
@@ -29,12 +46,19 @@
       },
       {
         "resource": "objects/*",
-        "methods": ["GET"],
+        "methods": [
+          "GET"
+        ],
         "action": "allow"
       },
       {
         "resource": "users/me",
         "methods": ["PATCH"],
+        "action": "allow"
+      },
+      {
+        "resource": "playlists/*",
+        "methods": "*",
         "action": "allow"
       }
     ]
