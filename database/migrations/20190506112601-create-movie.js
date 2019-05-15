@@ -26,13 +26,6 @@ module.exports = {
       genres: {
         type: Sequelize.STRING
       },
-      playlistId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Playlists',
-          key: 'id'
-        }
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

@@ -8,17 +8,22 @@ const models = require('../database/models')
  * @apiVersion 1.0.0
  * @apiGroup Playlist
  * @apiDescription This endpoint return list of playlist
- * @apiSuccess {Number}   id                   playlist id.
- * @apiSuccess {String}   name                 playlist name.
- * @apiSuccess {String}   description          playlist description.
- * @apiSuccess {Date}     createdAt            playlist create date.
- * @apiSuccess {Date}     updatedAt            playlist update date.
+ * @apiSuccess {Number}   id                   Playlist id.
+ * @apiSuccess {String}   name                 Playlist name.
+ * @apiSuccess {String}   description          Playlist description.
+ * @apiSuccess {Integer}  userId               Playlist owner id.
+ * @apiSuccess {Integer}  userId               Playlist owner id.
+ * @apiSuccess {Movie[]}  Movies               Array of playlist movies.
+ * @apiSuccess {Date}     createdAt            Playlist create date.
+ * @apiSuccess {Date}     updatedAt            Playlist update date.
  */
 exports.getPlaylists = async (request, response) => {
-
   Playlist.findAll({
     order: [
       ['id', 'DESC']
+    ],
+    include: [
+      models.Movie
     ],
   }).then(playlist => {
     response.status(200).json({
@@ -34,8 +39,10 @@ exports.getPlaylists = async (request, response) => {
  * @apiDescription This endpoint return playlist by ID.
  * @apiParam    {Number}    id                  Playlist id.
  * @apiSuccess  {Number}    id                  Playlist id.
- * @apiSuccess  {String}    name                Playlist name
- * @apiSuccess  {String}    description         Playlist description
+ * @apiSuccess  {String}    name                Playlist name.
+ * @apiSuccess  {String}    description         Playlist description.
+ * @apiSuccess  {Integer}   userId              Playlist owner id.
+ * @apiSuccess {Movie[]}  Movies               Array of playlist movies.
  * @apiSuccess  {Date}      createdAt           Playlist create date.
  * @apiSuccess  {Date}      updatedAt           Playlist update date.
  */
@@ -43,7 +50,10 @@ exports.getPlaylist = async (request, response) => {
   Playlist.findOne({
     where: {
       id: request.params.id
-    }
+    },
+    include: [
+      models.Movie
+    ],
   }).then(playlist => {
     if (playlist) {
       response.json(playlist)
@@ -63,8 +73,9 @@ exports.getPlaylist = async (request, response) => {
  * @apiSuccess  {Number}   id                 Created playlist id.
  * @apiSuccess  {String}   name               Created playlist name.
  * @apiSuccess  {String}   description        Created playlist description.
+ * @apiSuccess  {Integer}  userId             Created playlist owner id.
  * @apiSuccess  {Date}     createdAt          Created playlist create date.
- * @apiSuccess  {Date}     updatedAt           Created playlist update date.
+ * @apiSuccess  {Date}     updatedAt          Created playlist update date.
  */
 exports.createPlaylist = async (request, response) => {
   const validationErrors = validationResult(request)
@@ -76,7 +87,7 @@ exports.createPlaylist = async (request, response) => {
     })
   }
 
-  else{
+  else {
     Playlist.create({
       userId: request.user.id,
       name: request.body.name,
@@ -94,6 +105,8 @@ exports.createPlaylist = async (request, response) => {
  * @apiSuccess  {Number}   id                 Created playlist id.
  * @apiSuccess  {String}   name               Created playlist name.
  * @apiSuccess  {String}   description        Created playlist name.
+ * @apiSuccess  {Integer}  userId             Created playlist owner id. 
+ * @apiSuccess  {Movie[]}  Movies             Array of playlist movies.
  * @apiSuccess  {Date}     createdAt          Created playlist create date.
  * @apiSuccess  {Date}     updatedAt          Created playlist update date.
  */
@@ -102,16 +115,19 @@ exports.updatePlaylist = async (request, response) => {
     name: request.body.name,
     description: request.body.description
   }, {
-    where: {
-      id: request.params.id
-    }
-  }).then(() => {
-    Playlist.findOne({
       where: {
         id: request.params.id
       }
-    }).then(playlist => response.status(201).json(playlist))
-  })
+    }).then(() => {
+      Playlist.findOne({
+        where: {
+          id: request.params.id
+        },
+        include: [
+          models.Movie
+        ],
+      }).then(playlist => response.status(201).json(playlist))
+    })
 }
 
 /**
