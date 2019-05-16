@@ -7,24 +7,24 @@ const moment = require('moment')
 const { validationResult } = require('express-validator/check')
 
 /**
- * @api             {post}      /api/v1/auth/signup Register new user account.
- * @apiVersion      1.0.0
- * @apiGroup        Auth
- * @apiParam        {String}    email     User e-mail address.
- * @apiParam        {String}    password  User password.
- * @apiParam        {String}    firstName User first name.
- * @apiParam        {String}    lastName  User last name.
- * @apiSuccess      {String}    message   Status message.
- * @apiError        {Object[]}  errors    Array of field validation errors.
+ * @api           {post}        /api/v1/auth/signup   Register new user account.
+ * @apiVersion    1.0.0
+ * @apiGroup      Auth
+ * @apiParam      {String}      email                 User e-mail address.
+ * @apiParam      {String}      password              User password.
+ * @apiParam      {String}      firstName             User first name.
+ * @apiParam      {String}      lastName              User last name.
+ * @apiSuccess    {String}      message               Status message.
+ * @apiError      {Object[]}    errors                Array of validation errors.
  */
-exports.signup = async (request, response) => {
+exports.signup = (request, response) => {
   const validationErrors = validationResult(request)
 
   if (!validationErrors.isEmpty()) {
     return response.status(400).json({
       message: 'Invalid request data.',
       errors: validationErrors.array()
-    });
+    })
   }
 
   models.User.create({
@@ -41,23 +41,23 @@ exports.signup = async (request, response) => {
 }
 
 /**
- * @api             {post}  /api/v1/auth/signin Request for JWT token with user credentials.
- * @apiVersion      1.0.0
- * @apiGroup        Auth
- * @apiParam        {String}    email         User e-mail address.
- * @apiParam        {String}    password      User password.
- * @apiSuccess      {String}    accessToken   JWT access token.
- * @apiSuccess      {String}    refreshToken  JWT refresh token.
- * @apiError        {String}    message       Error message.
+ * @api           {post}      /api/v1/auth/signin   Request for JWT token with user credentials.
+ * @apiVersion    1.0.0
+ * @apiGroup      Auth
+ * @apiParam      {String}    email                 User e-mail address.
+ * @apiParam      {String}    password              User password.
+ * @apiSuccess    {String}    accessToken           JWT access token.
+ * @apiSuccess    {String}    refreshToken          JWT refresh token.
+ * @apiError      {String}    message               Error message.
  */
-exports.signin = async (request, response) => {
+exports.signin = (request, response) => {
   const validationErrors = validationResult(request)
 
   if (!validationErrors.isEmpty()) {
     return response.status(400).json({
       message: 'Invalid request data.',
       errors: validationErrors.array()
-    });
+    })
   }
 
   const email = request.body.email
@@ -103,13 +103,13 @@ exports.signin = async (request, response) => {
 }
 
 /**
- * @api             {post}  /api/v1/auth/signout  Request for JWT token invalidation.
- * @apiVersion      1.0.0
- * @apiGroup        Auth
- * @apiParam        {String}    token         JWT token.
- * @apiSuccess      {String}    message       Success message.
+ * @api           {post}      /api/v1/auth/signout    Request for JWT token invalidation.
+ * @apiVersion    1.0.0
+ * @apiGroup      Auth
+ * @apiParam      {String}    token                   JWT token.
+ * @apiSuccess    {String}    message                 Success message.
  */
-exports.signout = async (request, response) => {
+exports.signout = (request, response) => {
   models.RefreshToken.destroy({
     where: { userId: request.user.id }
   }).then(() => {
@@ -118,21 +118,21 @@ exports.signout = async (request, response) => {
 }
 
 /**
- * @api             {post}  /api/v1/auth/signin Request for JWT token with user credentials.
- * @apiVersion      1.0.0
- * @apiGroup        Auth
- * @apiParam        {String}    refreshToken  User refresh token.
- * @apiSuccess      {String}    accessToken   New JWT token.
- * @apiError        {String}    message       Error message.
+ * @api           {post}      /api/v1/auth/token    Request for new JWT token with refresh token.
+ * @apiVersion    1.0.0
+ * @apiGroup      Auth
+ * @apiParam      {String}    refreshToken          User refresh token.
+ * @apiSuccess    {String}    accessToken           New JWT token.
+ * @apiError      {String}    message               Error message.
  */
-exports.token = async (request, response) => {
+exports.token = (request, response) => {
   const validationErrors = validationResult(request)
 
   if (!validationErrors.isEmpty()) {
     return response.status(400).json({
       message: 'Invalid request data.',
       errors: validationErrors.array()
-    });
+    })
   }
 
   let refreshToken = request.body.refreshToken

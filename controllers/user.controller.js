@@ -3,15 +3,15 @@ const { validationResult } = require('express-validator/check')
 const bcryptjs = require('bcryptjs')
 
 /**
- * @api             {patch}     /api/v1/users/me    Update current authenticated user data.
- * @apiVersion      1.0.0
- * @apiGroup        Users
- * @apiParam        {String}    email               User e-mail address.
- * @apiParam        {String}    password            User password.
- * @apiParam        {String}    firstName           User first name.
- * @apiParam        {String}    lastName            User last name.
- * @apiSuccess      {String}    message             Status message.
- * @apiError        {Object[]}  errors              Array of field validation errors.
+ * @api           {patch}       /api/v1/users/me    Update current authenticated user profile.
+ * @apiVersion    1.0.0
+ * @apiGroup      Users
+ * @apiParam      {String}      email               User e-mail address.
+ * @apiParam      {String}      password            User password.
+ * @apiParam      {String}      firstName           User first name.
+ * @apiParam      {String}      lastName            User last name.
+ * @apiSuccess    {String}      message             Status message.
+ * @apiError      {Object[]}    errors              Array of validation errors.
  */
 exports.patchCurrentUser = (request, response) => {
   const validationErrors = validationResult(request)
@@ -42,16 +42,16 @@ exports.patchCurrentUser = (request, response) => {
 }
 
 /**
- * @api             {patch}     /api/v1/users/:id   Update user data.
- * @apiVersion      1.0.0
- * @apiGroup        Users
- * @apiParam        {String}    email               User e-mail address.
- * @apiParam        {String}    password            User password.
- * @apiParam        {String}    role                User role.
- * @apiParam        {String}    firstName           User first name.
- * @apiParam        {String}    lastName            User last name.
- * @apiSuccess      {String}    message             Status message.
- * @apiError        {Object[]}  errors              Array of field validation errors.
+ * @api           {patch}       /api/v1/users/:id   Update user profile.
+ * @apiVersion    1.0.0
+ * @apiGroup      Users
+ * @apiParam      {String}      email               User e-mail address.
+ * @apiParam      {String}      password            User password.
+ * @apiParam      {String}      role                User role.
+ * @apiParam      {String}      firstName           User first name.
+ * @apiParam      {String}      lastName            User last name.
+ * @apiSuccess    {String}      message             Status message.
+ * @apiError      {Object[]}    errors              Array of validation errors.
  */
 exports.patchUser = (request, response) => {
   const validationErrors = validationResult(request)
@@ -83,11 +83,11 @@ exports.patchUser = (request, response) => {
 }
 
 /**
- * @api             {delete}    /api/v1/users/:id   Delete user by ID.
- * @apiVersion      1.0.0
- * @apiGroup        Users
- * @apiSuccess      {String}    message             Status message.
- * @apiError        {Object[]}  errors              Array of field validation errors.
+ * @api           {delete}      /api/v1/users/:id   Delete user by ID.
+ * @apiVersion    1.0.0
+ * @apiGroup      Users
+ * @apiSuccess    {String}      message             Status message.
+ * @apiError      {Object[]}    errors              Array of validation errors.
  */
 exports.deleteUser = (request, response) => {
   models.User.findByPk(request.params.id).then((user) => {
