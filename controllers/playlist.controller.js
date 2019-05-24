@@ -1,5 +1,7 @@
 const Playlist = require('../database/models').Playlist
-const { validationResult } = require('express-validator/check')
+const {
+  validationResult
+} = require('express-validator/check')
 const models = require('../database/models')
 
 
@@ -18,7 +20,11 @@ const models = require('../database/models')
  * @apiSuccess {Date}     updatedAt            Playlist update date.
  */
 exports.getPlaylists = async (request, response) => {
+
   Playlist.findAll({
+    where: [{
+      userId: request.user.id
+    }],
     order: [
       ['id', 'DESC']
     ],
@@ -47,20 +53,29 @@ exports.getPlaylists = async (request, response) => {
  * @apiSuccess  {Date}      updatedAt           Playlist update date.
  */
 exports.getPlaylist = async (request, response) => {
-  Playlist.findOne({
-    where: {
-      id: request.params.id
-    },
-    include: [
-      models.Movie
-    ],
-  }).then(playlist => {
-    if (playlist) {
-      response.json(playlist)
-    } else {
-      response.status(404).json(null)
-    }
-  })
+  const validationErrors = validationResult(request)
+
+  if (!validationErrors.isEmpty()) {
+    response.status(400).json({
+      message: 'Invalid request data.',
+      errors: validationErrors.array()
+    })
+  } else {
+    Playlist.findOne({
+      where: {
+        id: request.params.id
+      },
+      include: [
+        models.Movie
+      ],
+    }).then(playlist => {
+      if (playlist) {
+        response.json(playlist)
+      } else {
+        response.status(404).json(null)
+      }
+    })
+  }
 }
 
 /**
@@ -85,9 +100,7 @@ exports.createPlaylist = async (request, response) => {
       message: 'Invalid request data.',
       errors: validationErrors.array()
     })
-  }
-
-  else {
+  } else {
     Playlist.create({
       userId: request.user.id,
       name: request.body.name,
@@ -111,23 +124,24 @@ exports.createPlaylist = async (request, response) => {
  * @apiSuccess  {Date}     updatedAt          Created playlist update date.
  */
 exports.updatePlaylist = async (request, response) => {
+
   Playlist.update({
     name: request.body.name,
     description: request.body.description
   }, {
+    where: {
+      id: request.params.id
+    }
+  }).then(() => {
+    Playlist.findOne({
       where: {
         id: request.params.id
-      }
-    }).then(() => {
-      Playlist.findOne({
-        where: {
-          id: request.params.id
-        },
-        include: [
-          models.Movie
-        ],
-      }).then(playlist => response.status(201).json(playlist))
-    })
+      },
+      include: [
+        models.Movie
+      ],
+    }).then(playlist => response.status(201).json(playlist))
+  })
 }
 
 /**
@@ -137,9 +151,18 @@ exports.updatePlaylist = async (request, response) => {
  * @apiDescription Endpoint for delete playlist.
  */
 exports.deletePlaylist = async (request, response) => {
-  Playlist.destroy({
-    where: {
-      id: request.params.id
-    }
-  }).then(() => response.status(204).json(null))
+  const validationErrors = validationResult(request)
+
+  if (!validationErrors.isEmpty()) {
+    response.status(400).json({
+      message: 'Invalid request data.',
+      errors: validationErrors.array()
+    })
+  } else {
+    Playlist.destroy({
+      where: {
+        id: request.params.id
+      }
+    }).then(() => response.status(204).json(null))
+  }
 }
