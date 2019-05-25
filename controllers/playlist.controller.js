@@ -51,14 +51,16 @@ exports.getPlaylists = async (request, response) => {
  * @apiSuccess {Movie[]}  Movies               Array of playlist movies.
  * @apiSuccess  {Date}      createdAt           Playlist create date.
  * @apiSuccess  {Date}      updatedAt           Playlist update date.
- */
+ */   
+
 exports.getPlaylist = async (request, response) => {
   const validationErrors = validationResult(request)
 
   if (!validationErrors.isEmpty()) {
-    response.status(400).json({
-      message: 'Invalid request data.',
-      errors: validationErrors.array()
+    response.status(403).json({
+      status: 'Access denied',
+      success: false,
+      message: "You do not have access to this playlist"
     })
   } else {
     Playlist.findOne({
@@ -124,7 +126,22 @@ exports.createPlaylist = async (request, response) => {
  * @apiSuccess  {Date}     updatedAt          Created playlist update date.
  */
 exports.updatePlaylist = async (request, response) => {
+  const validationErrors = validationResult(request)
 
+  if (!validationErrors.isEmpty()) {
+    if(validationErrors.array()[0].msg === 'You are not the owner of this playlist.'){
+      response.status(403).json({
+        status: 'Access denied',
+        success: false,
+        message: "You do not have access to this playlist"
+      })
+    } else{
+      response.status(400).json({
+        message: 'Invalid request data.',
+        errors: validationErrors.array()
+      })
+    }
+  } else {
   Playlist.update({
     name: request.body.name,
     description: request.body.description
@@ -143,6 +160,7 @@ exports.updatePlaylist = async (request, response) => {
     }).then(playlist => response.status(201).json(playlist))
   })
 }
+}
 
 /**
  * @api {delete} /api/v1/playlists/:id Delete playlist by ID
@@ -154,9 +172,10 @@ exports.deletePlaylist = async (request, response) => {
   const validationErrors = validationResult(request)
 
   if (!validationErrors.isEmpty()) {
-    response.status(400).json({
-      message: 'Invalid request data.',
-      errors: validationErrors.array()
+    response.status(403).json({
+      status: 'Access denied',
+      success: false,
+      message: "You do not have access to this playlist"
     })
   } else {
     Playlist.destroy({
