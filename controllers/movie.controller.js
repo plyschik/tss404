@@ -1,6 +1,7 @@
 const Movie = require('../database/models').Movie
 const Playlist = require('../database/models').Playlist
 const tmdb = require('../services/tmdb')
+const ger = require('../services/recommender')
 
 /**
  * @api             {get}     /api/v1/movies/    Show all movies from database.
@@ -14,17 +15,17 @@ from user playlist.
 
 exports.getMovies = async (request, response) => {
   Movie.findAll({
-    order: [
-      ['id', 'DESC']
-    ]
+    order: [['id', 'DESC']]
   })
     .then(movies => {
       response.status(200).json({
         message: 'Movies found.'
       })
     })
-    .catch((error) => {
-      response.status(500).json({ message: 'Unknown database error. Try again.' })
+    .catch(error => {
+      response
+        .status(500)
+        .json({ message: 'Unknown database error. Try again.' })
     })
 }
 
@@ -49,8 +50,10 @@ exports.getMovie = async (request, response) => {
         message: 'Movie find successfully.'
       })
     })
-    .catch((error) => {
-      response.status(500).json({ message: 'Unknown database error. Try again.' })
+    .catch(error => {
+      response
+        .status(500)
+        .json({ message: 'Unknown database error. Try again.' })
     })
 }
 
@@ -69,36 +72,81 @@ exports.getMovie = async (request, response) => {
  */
 
 exports.createMovie = async (request, response) => {
-  const { movieId, playlistId } = request.params
+  const { playlistId } = request.params
+  const { id } = request.body
 
-  tmdb.api.get(`/movie/${movieId}`)
+  tmdb.api
+    .get(`/movie/${id}`)
     .then(movie => {
-      const { movie_id, original_title, original_language, poster_path, overview, release_date, genres } = movie.data
+      const {
+        id,
+        original_title,
+        original_language,
+        poster_path,
+        overview,
+        release_date,
+        genres
+      } = movie.data
 
       const genreNames = genres.map(genre => genre.name)
 
-      Movie.create({
-        id: movie_id,
-        title: original_title,
-        poster: `https://image.tmdb.org/t/p/w500/${poster_path}`,
-        originalLanguage: original_language,
-        overview,
-        playlistId: playlistId,
-        releaseDate: release_date,
-        genres: genreNames.toString()
-      }).then(createdMovie => response.status(200).json({
-        message: 'Your movie was successfully added.'
-      })).catch((error) => {
-        response.status(500).json({ message: 'Unknown database error. Try again.' })
+      Movie.findOrCreate({
+        where: { id: id },
+        defaults: {
+          title: original_title,
+          poster: `https://image.tmdb.org/t/p/w500/${poster_path}`,
+          originalLanguage: original_language,
+          overview,
+          releaseDate: release_date,
+          genres: genreNames.toString()
+        }
       })
-    }).catch((error) => {
-      response.status(500).json({ message: 'Unknown database error. Try again.' })
+        .then(([createdMovie, wasCreated]) => {
+          ger.events([
+            {
+              namespace: 'movies',
+              person: 'bob',
+              action: 'likes',
+              thing: 'xmen',
+              expires_at: '2020-06-06'
+            },
+            {
+              namespace: 'movies',
+              person: 'bob',
+              action: 'likes',
+              thing: 'avengers',
+              expires_at: '2020-06-06'
+            },
+            {
+              namespace: 'movies',
+              person: request.user.id,
+              action: 'likes',
+              thing: 'xmen',
+              expires_at: '2020-06-06'
+            }
+          ])
+
+          response.status(200).json({
+            message: 'Your movie was successfully added.',
+            wasCreated
+          })
+        })
+        .catch(error => {
+          response
+            .status(500)
+            .json({ error, message: 'Unknown database error. Try again.' })
+        })
+    })
+    .catch(error => {
+      response
+        .status(500)
+        .json({ message: 'Unknown external database error. Try again.' })
     })
 }
 
 /**
  * @api             {delete}     /api/v1/playlist/:playlistId/movies/:movieId
- * @apiDescription  This endpoint delete movie from user playlist.      
+ * @apiDescription  This endpoint delete movie from user playlist.
  * @apiVersion      1.0.0
  * @apiGroup        Movies
  * @apiDescription  This endpoint delete movie from user playlist.
@@ -119,7 +167,9 @@ exports.deleteMovie = async (request, response) => {
         message: 'Movie successfully deleted.'
       })
     })
-    .catch((error) => {
-      response.status(500).json({ message: 'Unknown database error. Try again.' })
+    .catch(error => {
+      response
+        .status(500)
+        .json({ message: 'Unknown database error. Try again.' })
     })
 }

@@ -33,11 +33,15 @@ exports.signup = (request, response) => {
     role: 'user',
     firstName: request.body.firstName,
     lastName: request.body.lastName
-  }).then(() => {
-    response.status(201).json({ message: 'Account created.' })
-  }).catch((error) => {
-    response.status(500).json({ message: 'Unknown database error. Try again.' })
   })
+    .then(() => {
+      response.status(201).json({ message: 'Account created.' })
+    })
+    .catch(error => {
+      response
+        .status(500)
+        .json({ message: 'Unknown database error. Try again.' })
+    })
 }
 
 /**
@@ -65,9 +69,11 @@ exports.signin = (request, response) => {
 
   models.User.findOne({
     where: { email: email }
-  }).then((user) => {
+  }).then(user => {
     if (!user || !bcryptjs.compareSync(password, user.password)) {
-      return response.status(422).json({ message: 'Invalid email or password.' })
+      return response
+        .status(422)
+        .json({ message: 'Invalid email or password.' })
     }
 
     models.RefreshToken.destroy({
@@ -79,17 +85,23 @@ exports.signin = (request, response) => {
     models.RefreshToken.create({
       userId: user.id,
       token: refreshToken,
-      expiredAt: moment().add(config.jwt.refreshTokenTTL, 'minutes').format()
+      expiredAt: moment()
+        .add(config.jwt.refreshTokenTTL, 'minutes')
+        .format()
     }).then(() => {
-      const accessToken = jwt.sign({
-        user: {
-          id: user.id,
-          role: user.role,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName
-        }
-      }, config.jwt.secret, { expiresIn: `${config.jwt.accessTokenTTL}m` })
+      const accessToken = jwt.sign(
+        {
+          user: {
+            id: user.id,
+            role: user.role,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
+          }
+        },
+        config.jwt.secret,
+        { expiresIn: `${config.jwt.accessTokenTTL}m` }
+      )
 
       return response.status(200).json({
         message: 'Signed in successfully.',
@@ -136,11 +148,11 @@ exports.token = (request, response) => {
   }
 
   let refreshToken = request.body.refreshToken
-  
+
   models.RefreshToken.findOne({
     where: { token: refreshToken },
-    include: [ models.User ]
-  }).then((token) => {
+    include: [models.User]
+  }).then(token => {
     if (!token) {
       return response.status(400).json({ message: 'Invalid refresh token.' })
     }
@@ -153,15 +165,19 @@ exports.token = (request, response) => {
       return response.status(400).json({ message: 'Refresh token expired.' })
     }
 
-    const accessToken = jwt.sign({
-      user: {
-        id: user.id,
-        role: user.role,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName
-      }
-    }, config.jwt.secret, { expiresIn: `${config.jwt.accessTokenTTL}m` })
+    const accessToken = jwt.sign(
+      {
+        user: {
+          id: user.id,
+          role: user.role,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
+      },
+      config.jwt.secret,
+      { expiresIn: `${config.jwt.accessTokenTTL}m` }
+    )
 
     return response.status(200).json({
       message: 'Access token successfully refreshed.',
