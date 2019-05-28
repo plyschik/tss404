@@ -25,13 +25,13 @@
         "action": "allow"
       },   
       {
-        "resource": "/:movieId/:playlist/:playlistId",
+        "resource": "movies/:movieId/:playlist/:playlistId",
         "methods": ["DESTROY"],
         "action": "allow"
       },
       {
-        "resource": "/:movieId/:playlist/:playlistId",
-        "methods": ["POST"],
+        "resource": "/playlist/:playlistId/movies/:movieId",
+        "methods": "*",
         "action": "allow"
       },
       {
@@ -40,7 +40,7 @@
         "action": "allow"
       },
       {
-        "resource": "movies/movieId",
+        "resource": "movies/:movieId",
         "methods": "*",
         "action": "allow"
       }

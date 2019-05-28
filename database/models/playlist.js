@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.STRING
   }, {});
   Playlist.associate = function(models) {
-    Playlist.hasMany(models.Movie);
+    Playlist.belongsToMany(models.Movie, {through: 'movie_playlist' } );
   };
   return Playlist;
 };

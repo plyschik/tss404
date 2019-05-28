@@ -38,10 +38,11 @@ exports.getMovies = async (request, response) => {
  */
 
 exports.getMovie = async (request, response) => {
-  const { id } = request.params
+  const { movieId } = request.params
+  console.log(movieId)
   Movie.findAll({
     where: {
-      id
+      id: movieId
     }
   })
     .then(movies => {

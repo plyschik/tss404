@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
     genres: DataTypes.STRING
   }, {});
   Movie.associate = function(models) {
-    Movie.belongsTo(models.Playlist);
+    Movie.belongsToMany(models.Playlist, {through: 'movie_playlist'} );
   };
+
   return Movie;
 };
