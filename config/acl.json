@@ -4,9 +4,7 @@
     "permissions": [
       {
         "resource": "search",
-        "methods": [
-          "GET"
-        ],
+        "methods": ["GET"],
         "action": "allow"
       },
       {
@@ -23,7 +21,7 @@
         "resource": "auth/token",
         "methods": "*",
         "action": "allow"
-      },   
+      },
       {
         "resource": "movies/:movieId/:playlist/:playlistId",
         "methods": ["DESTROY"],
@@ -50,20 +48,28 @@
     "group": "user",
     "permissions": [
       {
+        "resource": "recommend",
+        "methods": ["GET"],
+        "action": "allow"
+      },
+      {
         "resource": "auth/*",
         "methods": "*",
         "action": "allow"
       },
       {
         "resource": "objects/*",
-        "methods": [
-          "GET"
-        ],
+        "methods": ["GET"],
         "action": "allow"
       },
       {
         "resource": "users/me",
         "methods": ["PATCH"],
+        "action": "allow"
+      },
+      {
+        "resource": "playlists/*",
+        "methods": "*",
         "action": "allow"
       }
     ]

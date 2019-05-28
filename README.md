@@ -26,8 +26,7 @@ $ docker-compose exec nodejs sh
 
 5. Utwórz plik konfiguracyjny `.env` (ewentualnie dostosuj ustawienia):
 ```bash
-$ mv .env.example .env
-$ nano .env
+$ cp .env.example .env
 ```
 
 6. Aby zainicjować bazę danych należy użyć następującego polecenia:

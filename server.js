@@ -1,13 +1,13 @@
-require('dotenv').config();
+require('dotenv').config()
 
-const config = require('./config');
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const helmet = require('helmet');
-const routes = require('./routes');
-const authorization = require('./middlewares/authorization');
-const acl = require('./services/acl');
+const config = require('./config')
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+const helmet = require('helmet')
+const routes = require('./routes')
+const authorizationMiddleware = require('./middlewares/authorization')
+const acl = require('./services/acl')
 
 const server = express()
   .use(bodyParser.json())
@@ -15,14 +15,12 @@ const server = express()
   .use(cors())
   .use(helmet())
   .use('/docs', express.static('docs'))
-  .use(authorization)
+  .use(authorizationMiddleware)
   .use(acl.authorize)
-  .use('/api/v1', routes);
+  .use('/api/v1', routes)
 
 if (config.env !== 'test') {
-  server.listen(config.port, () =>
-    console.log(`Server is running on port: ${config.port}.`)
-  );
+  server.listen(config.port, () => console.log(`Server is running on port: ${config.port}.`))
 }
 
-module.exports = server;
+module.exports = server

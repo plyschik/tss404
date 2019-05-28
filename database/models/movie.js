@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     genres: DataTypes.STRING
   }, {});
   Movie.associate = function(models) {
-    Movie.belongsToMany(models.Playlist, {through: 'movie_playlist'} );
+    Movie.belongsToMany(models.Playlist, {through: 'movie_playlist', foreignKey: 'movieId'})
   };
 
   return Movie;

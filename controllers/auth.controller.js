@@ -7,24 +7,24 @@ const moment = require('moment')
 const { validationResult } = require('express-validator/check')
 
 /**
- * @api             {post}      /api/v1/auth/signup Register new user account.
- * @apiVersion      1.0.0
- * @apiGroup        Auth
- * @apiParam        {String}    email     User e-mail address.
- * @apiParam        {String}    password  User password.
- * @apiParam        {String}    firstName User first name.
- * @apiParam        {String}    lastName  User last name.
- * @apiSuccess      {String}    message   Status message.
- * @apiError        {Object[]}  errors    Array of field validation errors.
+ * @api           {post}        /api/v1/auth/signup   Register new user account.
+ * @apiVersion    1.0.0
+ * @apiGroup      Auth
+ * @apiParam      {String}      email                 User e-mail address.
+ * @apiParam      {String}      password              User password.
+ * @apiParam      {String}      firstName             User first name.
+ * @apiParam      {String}      lastName              User last name.
+ * @apiSuccess    {String}      message               Status message.
+ * @apiError      {Object[]}    errors                Array of validation errors.
  */
-exports.signup = async (request, response) => {
+exports.signup = (request, response) => {
   const validationErrors = validationResult(request)
 
   if (!validationErrors.isEmpty()) {
     return response.status(400).json({
       message: 'Invalid request data.',
       errors: validationErrors.array()
-    });
+    })
   }
 
   models.User.create({
@@ -33,31 +33,35 @@ exports.signup = async (request, response) => {
     role: 'user',
     firstName: request.body.firstName,
     lastName: request.body.lastName
-  }).then(() => {
-    response.status(201).json({ message: 'Account created.' })
-  }).catch((error) => {
-    response.status(500).json({ message: 'Unknown database error. Try again.' })
   })
+    .then(() => {
+      response.status(201).json({ message: 'Account created.' })
+    })
+    .catch(error => {
+      response
+        .status(500)
+        .json({ message: 'Unknown database error. Try again.' })
+    })
 }
 
 /**
- * @api             {post}  /api/v1/auth/signin Request for JWT token with user credentials.
- * @apiVersion      1.0.0
- * @apiGroup        Auth
- * @apiParam        {String}    email         User e-mail address.
- * @apiParam        {String}    password      User password.
- * @apiSuccess      {String}    accessToken   JWT access token.
- * @apiSuccess      {String}    refreshToken  JWT refresh token.
- * @apiError        {String}    message       Error message.
+ * @api           {post}      /api/v1/auth/signin   Request for JWT token with user credentials.
+ * @apiVersion    1.0.0
+ * @apiGroup      Auth
+ * @apiParam      {String}    email                 User e-mail address.
+ * @apiParam      {String}    password              User password.
+ * @apiSuccess    {String}    accessToken           JWT access token.
+ * @apiSuccess    {String}    refreshToken          JWT refresh token.
+ * @apiError      {String}    message               Error message.
  */
-exports.signin = async (request, response) => {
+exports.signin = (request, response) => {
   const validationErrors = validationResult(request)
 
   if (!validationErrors.isEmpty()) {
     return response.status(400).json({
       message: 'Invalid request data.',
       errors: validationErrors.array()
-    });
+    })
   }
 
   const email = request.body.email
@@ -65,9 +69,11 @@ exports.signin = async (request, response) => {
 
   models.User.findOne({
     where: { email: email }
-  }).then((user) => {
+  }).then(user => {
     if (!user || !bcryptjs.compareSync(password, user.password)) {
-      return response.status(422).json({ message: 'Invalid email or password.' })
+      return response
+        .status(422)
+        .json({ message: 'Invalid email or password.' })
     }
 
     models.RefreshToken.destroy({
@@ -79,17 +85,23 @@ exports.signin = async (request, response) => {
     models.RefreshToken.create({
       userId: user.id,
       token: refreshToken,
-      expiredAt: moment().add(config.jwt.refreshTokenTTL, 'minutes').format()
+      expiredAt: moment()
+        .add(config.jwt.refreshTokenTTL, 'minutes')
+        .format()
     }).then(() => {
-      const accessToken = jwt.sign({
-        user: {
-          id: user.id,
-          role: user.role,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName
-        }
-      }, config.jwt.secret, { expiresIn: `${config.jwt.accessTokenTTL}m` })
+      const accessToken = jwt.sign(
+        {
+          user: {
+            id: user.id,
+            role: user.role,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
+          }
+        },
+        config.jwt.secret,
+        { expiresIn: `${config.jwt.accessTokenTTL}m` }
+      )
 
       return response.status(200).json({
         message: 'Signed in successfully.',
@@ -103,13 +115,13 @@ exports.signin = async (request, response) => {
 }
 
 /**
- * @api             {post}  /api/v1/auth/signout  Request for JWT token invalidation.
- * @apiVersion      1.0.0
- * @apiGroup        Auth
- * @apiParam        {String}    token         JWT token.
- * @apiSuccess      {String}    message       Success message.
+ * @api           {post}      /api/v1/auth/signout    Request for JWT token invalidation.
+ * @apiVersion    1.0.0
+ * @apiGroup      Auth
+ * @apiParam      {String}    token                   JWT token.
+ * @apiSuccess    {String}    message                 Success message.
  */
-exports.signout = async (request, response) => {
+exports.signout = (request, response) => {
   models.RefreshToken.destroy({
     where: { userId: request.user.id }
   }).then(() => {
@@ -118,29 +130,29 @@ exports.signout = async (request, response) => {
 }
 
 /**
- * @api             {post}  /api/v1/auth/signin Request for JWT token with user credentials.
- * @apiVersion      1.0.0
- * @apiGroup        Auth
- * @apiParam        {String}    refreshToken  User refresh token.
- * @apiSuccess      {String}    accessToken   New JWT token.
- * @apiError        {String}    message       Error message.
+ * @api           {post}      /api/v1/auth/token    Request for new JWT token with refresh token.
+ * @apiVersion    1.0.0
+ * @apiGroup      Auth
+ * @apiParam      {String}    refreshToken          User refresh token.
+ * @apiSuccess    {String}    accessToken           New JWT token.
+ * @apiError      {String}    message               Error message.
  */
-exports.token = async (request, response) => {
+exports.token = (request, response) => {
   const validationErrors = validationResult(request)
 
   if (!validationErrors.isEmpty()) {
     return response.status(400).json({
       message: 'Invalid request data.',
       errors: validationErrors.array()
-    });
+    })
   }
 
   let refreshToken = request.body.refreshToken
-  
+
   models.RefreshToken.findOne({
     where: { token: refreshToken },
-    include: [ models.User ]
-  }).then((token) => {
+    include: [models.User]
+  }).then(token => {
     if (!token) {
       return response.status(400).json({ message: 'Invalid refresh token.' })
     }
@@ -153,15 +165,19 @@ exports.token = async (request, response) => {
       return response.status(400).json({ message: 'Refresh token expired.' })
     }
 
-    const accessToken = jwt.sign({
-      user: {
-        id: user.id,
-        role: user.role,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName
-      }
-    }, config.jwt.secret, { expiresIn: `${config.jwt.accessTokenTTL}m` })
+    const accessToken = jwt.sign(
+      {
+        user: {
+          id: user.id,
+          role: user.role,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
+      },
+      config.jwt.secret,
+      { expiresIn: `${config.jwt.accessTokenTTL}m` }
+    )
 
     return response.status(200).json({
       message: 'Access token successfully refreshed.',
