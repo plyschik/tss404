@@ -1,5 +1,7 @@
 const Movie = require('../database/models').Movie
+const models = require('../database/models')
 const Playlist = require('../database/models').Playlist
+const movie_playlist = require('../database/models').movie_playlist
 const tmdb = require('../services/tmdb')
 const ger = require('../services/recommender')
 
@@ -126,7 +128,7 @@ exports.createMovie = async (request, response) => {
               expires_at: '2020-06-06'
             }
           ])
-          
+
           createdMovie.setPlaylists(playlistId)
 
           response.status(200).json({
@@ -158,17 +160,13 @@ exports.createMovie = async (request, response) => {
  */
 
 exports.deleteMovie = async (request, response) => {
-  const { movieId, playlistId } = request.params
-  Movie.destroy({
-    where: {
-      id: movieId
-    }
-  })
-    .then(movie => {
-      Movie.removePlaylist(playlistId)
-      response.status(200).json({
-        message: 'Movie successfully deleted.'
-      })
+  const { movieId, playlistId } = request.params 
+  movie_playlist.destroy({where: {movieId: movieId, playlistId: playlistId}})
+  // Movie.destroy({ where: { id: movieId }, include: [ movie_playlist, Playlist ] })
+  //   .then(movie => {
+  //      movie.destroy({ where: { id: movieId } })
+  .then(movie => {
+      response.send({ movie })
     })
     .catch(error => {
       response
