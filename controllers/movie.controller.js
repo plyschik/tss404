@@ -2,6 +2,7 @@ const Movie = require('../database/models').Movie
 const Playlist = require('../database/models').Playlist
 const tmdb = require('../services/tmdb')
 const ger = require('../services/recommender')
+const tamber = require('tamber')('CUZLTWG9lpxrGBsexANs')
 
 /**
  * @api             {get}     /api/v1/movies/    Show all movies from database.
@@ -102,29 +103,7 @@ exports.createMovie = async (request, response) => {
         }
       })
         .then(([createdMovie, wasCreated]) => {
-          ger.events([
-            {
-              namespace: 'movies',
-              person: 'bob',
-              action: 'likes',
-              thing: 'xmen',
-              expires_at: '2020-06-06'
-            },
-            {
-              namespace: 'movies',
-              person: 'bob',
-              action: 'likes',
-              thing: 'avengers',
-              expires_at: '2020-06-06'
-            },
-            {
-              namespace: 'movies',
-              person: request.user.id,
-              action: 'likes',
-              thing: 'xmen',
-              expires_at: '2020-06-06'
-            }
-          ])
+          createdMovie.setPlaylist(playlistId)
 
           response.status(200).json({
             message: 'Your movie was successfully added.',

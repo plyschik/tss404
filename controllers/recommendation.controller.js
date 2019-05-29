@@ -1,4 +1,6 @@
 const ger = require('../services/recommender')
+const Playlist = require('../database/models').Playlist
+const Movie = require('../database/models').Movie
 
 /**
  * @api             {get}      /api/v1/search Search for movies in TMDB.
@@ -12,9 +14,8 @@ const ger = require('../services/recommender')
 exports.recommend = (request, response) => {
   const { id } = request.user
 
-  ger
-    .recommendations_for_person('movies', id, {
-      actions: { likes: 1 }
-    })
-    .then(recommendations => response.send({ recommendations }))
+  Playlist.findAll({
+    where: { userId: id },
+    include: [Movie]
+  }).then(playlists => response.send(playlists))
 }
