@@ -11,5 +11,6 @@ module.exports = (sequelize, DataTypes) => {
   Movie.associate = function(models) {
     Movie.belongsToMany(models.Playlist, {through: 'movie_playlist', foreignKey: 'movieId'})
   };
+
   return Movie;
 };

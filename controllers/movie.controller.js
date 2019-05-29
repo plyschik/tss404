@@ -40,10 +40,11 @@ exports.getMovies = async (request, response) => {
  */
 
 exports.getMovie = async (request, response) => {
-  const { id } = request.params
+  const { movieId } = request.params
+  console.log(movieId)
   Movie.findAll({
     where: {
-      id
+      id: movieId
     }
   })
     .then(movies => {
@@ -103,7 +104,7 @@ exports.createMovie = async (request, response) => {
         }
       })
         .then(([createdMovie, wasCreated]) => {
-          createdMovie.setPlaylist(playlistId)
+          createdMovie.setPlaylists(playlistId)
 
           response.status(200).json({
             message: 'Your movie was successfully added.',
@@ -137,11 +138,11 @@ exports.deleteMovie = async (request, response) => {
   const { movieId, playlistId } = request.params
   Movie.destroy({
     where: {
-      movieId,
-      playlistId
+      id: movieId
     }
   })
     .then(movie => {
+      Movie.removePlaylist(playlistId)
       response.status(200).json({
         message: 'Movie successfully deleted.'
       })
@@ -149,6 +150,6 @@ exports.deleteMovie = async (request, response) => {
     .catch(error => {
       response
         .status(500)
-        .json({ message: 'Unknown database error. Try again.' })
+        .json({ error, message: 'Unknown database error. Try again.' })
     })
 }

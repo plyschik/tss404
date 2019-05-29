@@ -18,7 +18,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       overview: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(2000)
       },
       releaseDate: {
         type: Sequelize.DATE

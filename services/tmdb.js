@@ -3,10 +3,10 @@ const config = require('../config')
 
 let tmdb = {}
 
-tmdb.getGenreNamesFromIds = function (genreIds, genres) {
-  let genreNames = new Set()
+tmdb.getGenreNamesFromIds = function(genreIds, genres) {
+  const genreNames = new Set()
 
-  genreIds.forEach((genreId) => {
+  genreIds.forEach(genreId => {
     for (let genre of genres) {
       if (genreId === genre.id) {
         genreNames.add(genre.name)
@@ -17,7 +17,30 @@ tmdb.getGenreNamesFromIds = function (genreIds, genres) {
   return Array.from(genreNames)
 }
 
-tmdb.getReducedMovieInfo = function (movie, genreNames) {
+tmdb.getGenreIdsFromNames = function(genreNames, genres) {
+  const genreIds = new Set()
+
+  genreNames.forEach(genreName => {
+    for (let genre of genres) {
+      if (genreName === genre.name) {
+        genreIds.add(genre.id)
+      }
+    }
+  })
+
+  return Array.from(genreIds)
+}
+
+tmdb.removeWatchedMoviesFromRecommendations = function(
+  watchedMovieIds,
+  recommendations
+) {
+  return recommendations.data.results.filter(
+    recommendation => !watchedMovieIds.includes(recommendation.id)
+  )
+}
+
+tmdb.getReducedMovieInfo = function(movie, genreNames) {
   return {
     id: movie.id,
     title: movie.title,
