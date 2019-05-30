@@ -21,26 +21,6 @@
         "resource": "auth/token",
         "methods": "*",
         "action": "allow"
-      },
-      {
-        "resource": "movies/:movieId/:playlist/:playlistId",
-        "methods": ["DESTROY"],
-        "action": "allow"
-      },
-      {
-        "resource": "/playlist/:playlistId/movies/:movieId",
-        "methods": "*",
-        "action": "allow"
-      },
-      {
-        "resource": "movies",
-        "methods": "*",
-        "action": "allow"
-      },
-      {
-        "resource": "movies/:movieId",
-        "methods": "*",
-        "action": "allow"
       }
     ]
   },
@@ -70,6 +50,11 @@
       {
         "resource": "playlists/*",
         "methods": "*",
+        "action": "allow"
+      },
+      {
+        "resource": "movies/:movieId",
+        "methods": ["GET"],
         "action": "allow"
       }
     ]

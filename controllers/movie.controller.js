@@ -44,9 +44,15 @@ exports.getMovie = async (request, response) => {
     }
   })
     .then(movie => {
+      if (movie.length === 0) {
+        response.status(404).json({
+          message: 'Movie not found'
+        })
+      } else {
       response.status(200).json({
         movie
       })
+     }
     })
     .catch(error => {
       response
@@ -112,7 +118,7 @@ exports.createMovie = async (request, response) => {
                     })
                   } else {
                     movie.addPlaylists(playlistId)
-                    response.status(200).json({
+                    response.status(201).json({
                       message: 'Your movie was successfully added.',
                       movie
                     })
@@ -127,15 +133,16 @@ exports.createMovie = async (request, response) => {
             .json({ error, message: 'Unknown database error. Try again.' })
         })
     })
-    .catch(error => {
-      response
-        .status(500)
-        .json({ message: 'Unknown external database error. Try again.' })
+    .catch(errors => {
+      response.status(errors.response.status).send({
+        message: 'External database error',
+        errors: errors.response.data
+      })
     })
 }
 
 /**
- * @api             {delete}     /api/v1/playlist/:playlistId/movies/:movieId   This endpoint deletes movie from user playlist.
+ * @api             {delete}     /api/v1/playlists/:playlistId/movies/:movieId   This endpoint deletes movie from user playlist.
  * @apiVersion      1.0.0
  * @apiGroup        Movies
  * @apiSuccess      {Number}     movie               Amount of deleted movie from user playlist
@@ -146,13 +153,14 @@ exports.deleteMovie = async (request, response) => {
   const { movieId, playlistId } = request.params
   movie_playlist.destroy({ where: { movieId: movieId, playlistId: playlistId } })
     .then(movie => {
-      response.send({ movie })
       if (movie === 0) {
         response.status(404).json({
           message: 'Movie or playlist not found'
         })
       } else {
-        response.send({ movie })
+        response.status(201).send({ 
+          movie 
+        })
       }
     })
     .catch(error => {
