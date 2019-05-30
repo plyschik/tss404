@@ -8,7 +8,7 @@
     "db:init": "./bin/init-db.sh",
     "apidoc": "./node_modules/.bin/apidoc -i controllers/ -o docs/",
     "eslint": "./node_modules/.bin/eslint \"**/*.js\"",
-    "test": "NODE_ENV=test ./node_modules/.bin/mocha tests/**/movie.controller.test.js --exit"
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha tests/**/*.test.js --exit"
   },
   "license": "ISC",
   "dependencies": {
@@ -22,14 +22,12 @@
     "express": "^4.16.4",
     "express-acl": "^2.0.5",
     "express-validator": "^5.3.1",
-    "ger": "0.0.99",
     "helmet": "^3.16.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "mysql2": "^1.6.5",
     "sequelize": "^5.1.0",
-    "sequelize-cli": "^5.4.0",
-    "tamber": "^1.1.1"
+    "sequelize-cli": "^5.4.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",

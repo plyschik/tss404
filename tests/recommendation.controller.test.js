@@ -106,7 +106,11 @@ describe('Recommendation controller', () => {
                 movie.destroy().then(() => {
                   playlist.destroy().then(() => {
                     user.destroy().then(() => {
-                      done()
+                      db.movie_playlist
+                        .destroy({
+                          where: {}
+                        })
+                        .then(() => done())
                     })
                   })
                 })
