@@ -5,8 +5,7 @@ const tmdb = require('../services/tmdb')
  * @apiVersion      1.0.0
  * @apiGroup        Search
  * @apiParam        {String}    q         Query string.
- * @apiParam        {String}    api_key   TMDB API key.
- * @apiSuccess      {String}    movies    Array of found movies.
+ * @apiSuccess      {Object[]}    movies    Array of found movies.
  * @apiError        {Object[]}  errors    Array of errors messages.
  */
 exports.search = (request, response) => {
