@@ -1,14 +1,13 @@
 const Movie = require('../database/models').Movie
 const Playlist = require('../database/models').Playlist
+const movie_playlist = require('../database/models').movie_playlist
 const tmdb = require('../services/tmdb')
 
 /**
  * @api             {get}     /api/v1/movies/    Show all movies from database.
  * @apiVersion      1.0.0
  * @apiGroup        Movies
- * @apiDescription  This endpoint return list of movies.
-from user playlist.
- * @apiSuccess      {Date}     updatedAt     Movie update date.
+ * @apiSuccess      {Object[]}  movies              Array of all movies objects from database
  * @apiError        {Object[]}  errors              Array of field validation errors.
  */
 
@@ -18,7 +17,7 @@ exports.getMovies = async (request, response) => {
   })
     .then(movies => {
       response.status(200).json({
-        message: 'Movies found.'
+        movies
       })
     })
     .catch(error => {
@@ -29,11 +28,10 @@ exports.getMovies = async (request, response) => {
 }
 
 /**
- * @api             {get}     /api/v1/movies/:movieId    Show movies from user playlist.
+ * @api             {get}      /api/v1/movies/:movieId  This endpoint returns movie by Id.
  * @apiVersion      1.0.0
  * @apiGroup        Movies
- * @apiDescription  This endpoint return object by ID.
- * @apiSuccess      {Date}     updatedAt     Movie update date.
+ * @apiSuccess      {Object}    movie               Movie object by given id
  * @apiError        {Object[]}  errors              Array of field validation errors.
  */
 
@@ -45,10 +43,16 @@ exports.getMovie = async (request, response) => {
       id: movieId
     }
   })
-    .then(movies => {
+    .then(movie => {
+      if (movie.length === 0) {
+        response.status(404).json({
+          message: 'Movie not found'
+        })
+      } else {
       response.status(200).json({
-        message: 'Movie find successfully.'
+        movie
       })
+     }
     })
     .catch(error => {
       response
@@ -58,15 +62,11 @@ exports.getMovie = async (request, response) => {
 }
 
 /**
- * @api             {post}     /api/v1//playlist/:playlistId/movies/:movieId
- * @apiDescription  This endpoint create movie to user playlist.
+ * @api             {post}     /api/v1//playlists/:playlistId/movies/:movieId
+ * @apiDescription  This endpoint adds movie to user playlist.
  * @apiVersion      1.0.0
  * @apiGroup        Movies
- * @apiParam        {String}    title               Movie title.
- * @apiParam        {String}    poster           User first name.
- * @apiParam        {String}    originalLanguage            User last name.
- * @apiParam        {String}    overview           User first name.
- * @apiParam        {String}    poster           User first name.
+ * @apiParam        {Number}    id                  Movie id from tmdb database.
  * @apiSuccess      {String}    message             Status message.
  * @apiError        {Object[]}  errors              Array of field validation errors.
  */
@@ -101,12 +101,30 @@ exports.createMovie = async (request, response) => {
           genres: genreNames.toString()
         }
       })
-        .then(([createdMovie, wasCreated]) => {
-          createdMovie.setPlaylists(playlistId)
-
-          response.status(200).json({
-            message: 'Your movie was successfully added.',
-            wasCreated
+        .then(([movie, wasCreated]) => {
+          Playlist.findAll({
+            where: { id: playlistId }
+          }).then(playlist => {
+            if (playlist.length === 0) {
+              response.status(404).json({
+                message: 'Playlist not found'
+              })
+            } else {
+              movie_playlist.findAll({ where: { movieId: movie.id, playlistId: playlistId } })
+                .then(associations => {
+                  if (associations.length > 0) {
+                    response.status(400).json({
+                      message: 'Movie is already in playlist'
+                    })
+                  } else {
+                    movie.addPlaylists(playlistId)
+                    response.status(201).json({
+                      message: 'Your movie was successfully added.',
+                      movie
+                    })
+                  }
+                })
+            }
           })
         })
         .catch(error => {
@@ -115,35 +133,35 @@ exports.createMovie = async (request, response) => {
             .json({ error, message: 'Unknown database error. Try again.' })
         })
     })
-    .catch(error => {
-      response
-        .status(500)
-        .json({ message: 'Unknown external database error. Try again.' })
+    .catch(errors => {
+      response.status(errors.response.status).send({
+        message: 'External database error',
+        errors: errors.response.data
+      })
     })
 }
 
 /**
- * @api             {delete}     /api/v1/playlist/:playlistId/movies/:movieId
- * @apiDescription  This endpoint delete movie from user playlist.
+ * @api             {delete}     /api/v1/playlists/:playlistId/movies/:movieId   This endpoint deletes movie from user playlist.
  * @apiVersion      1.0.0
  * @apiGroup        Movies
- * @apiDescription  This endpoint delete movie from user playlist.
- * @apiSuccess      {Date}     updatedAt     Movie update date.
- * @apiError        {Object[]}  errors              Array of field validation errors.validation errors.
+ * @apiSuccess      {Number}     movie               Amount of deleted movie from user playlist
+ * @apiError        {Object[]}   errors              Array of field validation errors.
  */
 
 exports.deleteMovie = async (request, response) => {
   const { movieId, playlistId } = request.params
-  Movie.destroy({
-    where: {
-      id: movieId
-    }
-  })
+  movie_playlist.destroy({ where: { movieId: movieId, playlistId: playlistId } })
     .then(movie => {
-      Movie.removePlaylist(playlistId)
-      response.status(200).json({
-        message: 'Movie successfully deleted.'
-      })
+      if (movie === 0) {
+        response.status(404).json({
+          message: 'Movie or playlist not found'
+        })
+      } else {
+        response.status(201).send({ 
+          movie 
+        })
+      }
     })
     .catch(error => {
       response
