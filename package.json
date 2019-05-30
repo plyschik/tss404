@@ -22,12 +22,14 @@
     "express": "^4.16.4",
     "express-acl": "^2.0.5",
     "express-validator": "^5.3.1",
+    "ger": "0.0.99",
     "helmet": "^3.16.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "mysql2": "^1.6.5",
     "sequelize": "^5.1.0",
-    "sequelize-cli": "^5.4.0"
+    "sequelize-cli": "^5.4.0",
+    "tamber": "^1.1.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
