@@ -28,13 +28,19 @@ exports.search = (request, response) => {
             results.push(tmdb.getReducedMovieInfo(movie, genreNames))
           })
 
-          response.send(results)
+          response.send({ results })
         })
         .catch(errors => {
-          response.status(errors.response.status).send(errors.response.data)
+          response.status(errors.response.status).send({
+            message: 'External database error',
+            errors: errors.response.data
+          })
         })
     })
     .catch(errors => {
-      response.status(errors.response.status).send(errors.response.data)
+      response.status(errors.response.status).send({
+        message: 'External database error',
+        errors: errors.response.data
+      })
     })
 }

@@ -1,8 +1,6 @@
 const Movie = require('../database/models').Movie
 const Playlist = require('../database/models').Playlist
 const tmdb = require('../services/tmdb')
-const ger = require('../services/recommender')
-const tamber = require('tamber')('CUZLTWG9lpxrGBsexANs')
 
 /**
  * @api             {get}     /api/v1/movies/    Show all movies from database.
