@@ -3,11 +3,6 @@
     "group": "guest",
     "permissions": [
       {
-        "resource": "search",
-        "methods": ["GET"],
-        "action": "allow"
-      },
-      {
         "resource": "auth/signup",
         "methods": "*",
         "action": "allow"
@@ -27,6 +22,11 @@
   {
     "group": "user",
     "permissions": [
+      {
+        "resource": "search",
+        "methods": ["GET"],
+        "action": "allow"
+      },
       {
         "resource": "recommend",
         "methods": ["GET"],
