@@ -8,7 +8,7 @@ const models = require('../database/models')
 /**
  * @api {get} /api/v1/playlists Request for list of playlist
  * @apiVersion 1.0.0
- * @apiGroup Playlist
+ * @apiGroup Playlists
  * @apiDescription This endpoint return list of playlist
  * @apiSuccess {Number}   id                   Playlist id.
  * @apiSuccess {String}   name                 Playlist name.
@@ -41,7 +41,7 @@ exports.getPlaylists = async (request, response) => {
 /**
  * @api {get} /api/v1/playlists/:id Request for specific playlist by ID
  * @apiVersion 1.0.0
- * @apiGroup Playlist
+ * @apiGroup Playlists
  * @apiDescription This endpoint return playlist by ID.
  * @apiParam    {Number}    id                  Playlist id.
  * @apiSuccess  {Number}    id                  Playlist id.
@@ -83,7 +83,7 @@ exports.getPlaylist = async (request, response) => {
 /**
  * @api {post} /api/v1/playlists Create new playlist
  * @apiVersion 1.0.0
- * @apiGroup Playlist
+ * @apiGroup Playlists
  * @apiDescription Endpoint for create playlist.
  * @apiParam    {String}   name               Playlist name.
  * @apiParam    {String}   description        Playlist description.
@@ -114,7 +114,7 @@ exports.createPlaylist = async (request, response) => {
 /**
  * @api {put} /api/v1/playlists/:id Update playlist by ID
  * @apiVersion 1.0.0
- * @apiGroup Playlist
+ * @apiGroup Playlists
  * @apiDescription Endpoint for update playlist.
  * @apiParam    {String}   name               Playlist name.
  * @apiSuccess  {Number}   id                 Created playlist id.
@@ -165,7 +165,7 @@ exports.updatePlaylist = async (request, response) => {
 /**
  * @api {delete} /api/v1/playlists/:id Delete playlist by ID
  * @apiVersion 1.0.0
- * @apiGroup Playlist
+ * @apiGroup Playlists
  * @apiDescription Endpoint for delete playlist.
  */
 exports.deletePlaylist = async (request, response) => {
