@@ -2,6 +2,7 @@ require('dotenv').config()
 
 module.exports = {
   env: process.env.NODE_ENV,
+  letsEncryptPemDirectory: process.env.LETS_ENCRYPT_PEM_DIRECTORY,
   portHTTP: process.env.PORT_HTTP,
   portHTTPS: process.env.PORT_HTTPS,
   jwt: {

@@ -1,3 +1,3 @@
-npx sequelize db:create --env=development;
-npx sequelize db:migrate --env=development;
-npx sequelize db:seed:all --env=development;
+npx sequelize db:create --env=production;
+npx sequelize db:migrate --env=production;
+npx sequelize db:seed:all --env=production;
