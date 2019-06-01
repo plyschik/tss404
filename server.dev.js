@@ -20,7 +20,7 @@ const server = express()
   .use('/api/v1', routes)
 
 if (config.env !== 'test') {
-  server.listen(config.port, () => console.log(`Server is running on port: ${config.port}.`))
+  server.listen(config.portHTTP, () => console.log(`Server is running on port: ${config.portHTTP}.`))
 }
 
 module.exports = server

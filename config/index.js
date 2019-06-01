@@ -2,7 +2,8 @@ require('dotenv').config()
 
 module.exports = {
   env: process.env.NODE_ENV,
-  port: process.env.PORT,
+  portHTTP: process.env.PORT_HTTP,
+  portHTTPS: process.env.PORT_HTTPS,
   jwt: {
     secret: process.env.JWT_SECRET,
     accessTokenTTL: process.env.JWT_ACCESS_TOKEN_TTL,

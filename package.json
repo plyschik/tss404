@@ -2,10 +2,12 @@
   "name": "tss404",
   "version": "1.0.0",
   "description": "Movies REST API project for Server-Side Technologies subject.",
-  "main": "./server.js",
+  "main": "./server.dev.js",
   "scripts": {
-    "start": "./node_modules/.bin/nodemon server.js --legacy-watch",
-    "db:init": "./bin/init-db.sh",
+    "start:dev": "./node_modules/.bin/nodemon server.dev.js --legacy-watch",
+    "start:prod": "node ./server.prod.js",
+    "db:init:dev": "./bin/init-db-dev.sh",
+    "db:init:prod": "./bin/init-db-prod.sh",
     "apidoc": "./node_modules/.bin/apidoc -i controllers/ -o docs/",
     "eslint": "./node_modules/.bin/eslint \"**/*.js\"",
     "test": "NODE_ENV=test ./node_modules/.bin/mocha tests/**/*.js --exit"
